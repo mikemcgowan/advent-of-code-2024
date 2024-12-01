@@ -1,5 +1,5 @@
 # Advent of Code 2024
 
-```lua
+```sh
 lua run.lua {day}
-```lua
+```
