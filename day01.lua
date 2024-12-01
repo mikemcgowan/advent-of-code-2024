@@ -26,12 +26,19 @@ end
 
 local function part2(filename)
   local col1, col2 = to_cols(filename)
+  local cache = {}
   local sum = 0
   for _, v in ipairs(col1) do
-    local vs = lib.filter(col2, function(w)
-      return w == v
-    end)
-    sum = sum + v * #vs
+    if not cache[v] then
+      local c = 0
+      for _, w in ipairs(col2) do
+        if v == w then
+          c = c + 1
+        end
+      end
+      cache[v] = c
+    end
+    sum = sum + v * cache[v]
   end
   return sum
 end
