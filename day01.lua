@@ -16,11 +16,9 @@ local function part1(filename)
   local col1, col2 = to_cols(filename)
   table.sort(col1)
   table.sort(col2)
-  local deltas = {}
   local sum = 0
   for i = 1, #col1 do
     local delta = math.abs(col1[i] - col2[i])
-    table.insert(deltas, delta)
     sum = sum + delta
   end
   return sum
