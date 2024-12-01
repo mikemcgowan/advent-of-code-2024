@@ -27,22 +27,6 @@ function string.to_lines(text)
   return text:split("[^\r\n]+")
 end
 
-function string.pad_left(text, size)
-  if text:visible_length() >= size then
-    return text
-  else
-    return (" "):rep(size - text:visible_length()) .. text
-  end
-end
-
-function string.pad_right(text, size)
-  if text:visible_length() >= size then
-    return text
-  else
-    return text .. (" "):rep(size - text:visible_length())
-  end
-end
-
 local function load_lines_from_file(filename)
   local file = io.open(filename, "r")
   if not file then
