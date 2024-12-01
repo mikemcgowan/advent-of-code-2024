@@ -6,25 +6,26 @@ local colours = {
   cyan = "\27[36m",
 }
 
-function string.add_colour(text, colour)
-  local s = colours.bold
+function string.add_colour(s, colour)
+  local t = colours.bold
   if colour then
-    s = s .. colour
+    t = t .. colour
   end
-  s = s .. text .. colours.reset
-  return s
+  t = t .. s .. colours.reset
+  return t
 end
 
-function string.split(text, expr)
-  local lines = {}
-  for line in text:gmatch(expr) do
-    table.insert(lines, line)
+function string.split(s, expr)
+  expr = expr or "%S+"
+  local t = {}
+  for line in s:gmatch(expr) do
+    table.insert(t, line)
   end
-  return lines
+  return t
 end
 
-function string.to_lines(text)
-  return text:split("[^\r\n]+")
+function string.to_lines(s)
+  return s:split("[^\r\n]+")
 end
 
 local function load_lines_from_file(filename)
@@ -71,19 +72,10 @@ local function max_by(t, f)
   return max
 end
 
-local function split(s)
-  local t = {}
-  for str in s:gmatch("%S+") do
-    table.insert(t, str)
-  end
-  return t
-end
-
 return {
   colours = colours,
   load_lines_from_file = load_lines_from_file,
   map = map,
   filter = filter,
   max_by = max_by,
-  split = split,
 }

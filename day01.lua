@@ -5,7 +5,7 @@ local function to_cols(filename)
   local col1 = {}
   local col2 = {}
   for _, line in ipairs(lines) do
-    local bits = lib.split(line)
+    local bits = line:split()
     table.insert(col1, tonumber(bits[1]))
     table.insert(col2, tonumber(bits[2]))
   end
