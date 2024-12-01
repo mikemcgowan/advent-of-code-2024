@@ -42,9 +42,3 @@ return {
   part1 = part1,
   part2 = part2,
 }
-
---part1("./inputs/day01-test.txt")
---part1("./inputs/day01.txt")
-
---part2("./inputs/day01-test.txt")
---part2("./inputs/day01.txt")
