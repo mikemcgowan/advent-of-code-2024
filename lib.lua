@@ -18,8 +18,8 @@ end
 function string.split(s, expr)
   expr = expr or "%S+"
   local t = {}
-  for line in s:gmatch(expr) do
-    table.insert(t, line)
+  for match in s:gmatch(expr) do
+    table.insert(t, match)
   end
   return t
 end
