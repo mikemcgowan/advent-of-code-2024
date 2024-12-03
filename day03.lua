@@ -1,6 +1,8 @@
 local lib = require("lib")
 
 local MATCH_COMMA = "([^,]+)"
+local DO = "do()"
+local DONT = "don't()"
 
 local function sum_line(line)
   local sum = 0
@@ -22,7 +24,26 @@ local function part1(filename)
 end
 
 local function part2(filename)
-  return -1
+  local lines = lib.load_lines_from_file(filename)
+  local all = table.concat(lines)
+  local on = true
+  local s = ""
+  local sum = 0
+  for i = 1, #all do
+    s = s .. all:sub(i, i)
+    if on and s:sub(#s - #DONT + 1, #s) == DONT then
+      sum = sum + sum_line(s)
+      on = false
+      s = ""
+    elseif not on and s:sub(#s - #DO + 1, #s) == DO then
+      on = true
+      s = ""
+    end
+  end
+  if on and #s > 0 then
+    sum = sum + sum_line(s)
+  end
+  return sum
 end
 
 return {
