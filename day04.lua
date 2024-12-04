@@ -5,14 +5,6 @@ local A = "A"
 local M = "M"
 local S = "S"
 
-local function reverse(s)
-  local t = ""
-  for i = 1, #s do
-    t = s:sub(i, i) .. t
-  end
-  return t
-end
-
 local function count_xmas(s)
   local count = 0
   for i = 1, #s - #XMAS + 1 do
@@ -31,7 +23,7 @@ local function find_xmas_on_diagonal(lines, row, col, downwards)
     s = s .. lines[row + x * i]:sub(col + i, col + i)
   end
   assert(#s == #XMAS)
-  return s == XMAS or reverse(s) == XMAS
+  return s == XMAS or s:reverse() == XMAS
 end
 
 local function part1(filename)
@@ -40,7 +32,7 @@ local function part1(filename)
 
   -- rows
   for _, s in ipairs(lines) do
-    count = count + count_xmas(s) + count_xmas(reverse(s))
+    count = count + count_xmas(s) + count_xmas(s:reverse())
   end
 
   -- columns
@@ -49,7 +41,7 @@ local function part1(filename)
     for r = 1, #lines do
       s = s .. lines[r]:sub(col, col)
     end
-    count = count + count_xmas(s) + count_xmas(reverse(s))
+    count = count + count_xmas(s) + count_xmas(s:reverse())
   end
 
   -- top-left to bottom-right diagonals
