@@ -1,6 +1,9 @@
 local lib = require("lib")
 
 local XMAS = "XMAS"
+local A = "A"
+local M = "M"
+local S = "S"
 
 local function reverse(s)
   local t = ""
@@ -11,23 +14,33 @@ local function reverse(s)
 end
 
 local function count_xmas(s)
-  local c = 0
+  local count = 0
   for i = 1, #s - #XMAS + 1 do
     local t = s:sub(i, i + #XMAS - 1)
     if t == XMAS then
-      c = c + 1
+      count = count + 1
     end
   end
-  return c
+  return count
+end
+
+local function find_xmas_on_diagonal(lines, row, col, downwards)
+  local s = ""
+  local x = downwards and 1 or -1
+  for i = 0, #XMAS - 1 do
+    s = s .. lines[row + x * i]:sub(col + i, col + i)
+  end
+  assert(#s == #XMAS)
+  return s == XMAS or reverse(s) == XMAS
 end
 
 local function part1(filename)
   local lines = lib.load_lines_from_file(filename)
-  local c = 0
+  local count = 0
 
   -- rows
   for _, s in ipairs(lines) do
-    c = c + count_xmas(s) + count_xmas(reverse(s))
+    count = count + count_xmas(s) + count_xmas(reverse(s))
   end
 
   -- columns
@@ -36,21 +49,15 @@ local function part1(filename)
     for r = 1, #lines do
       s = s .. lines[r]:sub(col, col)
     end
-    c = c + count_xmas(s) + count_xmas(reverse(s))
+    count = count + count_xmas(s) + count_xmas(reverse(s))
   end
 
   -- top-left to bottom-right diagonals
   for r = 1, #lines - #XMAS + 1 do
     local line = lines[r]
-    for i = 1, #line - #XMAS + 1 do
-      local s = ""
-      s = s .. line:sub(i, i)
-      s = s .. lines[r + 1]:sub(i + 1, i + 1)
-      s = s .. lines[r + 2]:sub(i + 2, i + 2)
-      s = s .. lines[r + 3]:sub(i + 3, i + 3)
-      assert(#s == #XMAS)
-      if s == XMAS or reverse(s) == XMAS then
-        c = c + 1
+    for c = 1, #line - #XMAS + 1 do
+      if find_xmas_on_diagonal(lines, r, c, true) then
+        count = count + 1
       end
     end
   end
@@ -58,25 +65,46 @@ local function part1(filename)
   -- bottom-left to top-right diagonals
   for r = #lines, #XMAS, -1 do
     local line = lines[r]
-    for i = 1, #line - #XMAS + 1 do
-      local s = ""
-      s = s .. line:sub(i, i)
-      s = s .. lines[r - 1]:sub(i + 1, i + 1)
-      s = s .. lines[r - 2]:sub(i + 2, i + 2)
-      s = s .. lines[r - 3]:sub(i + 3, i + 3)
-      assert(#s == #XMAS)
-      if s == XMAS or reverse(s) == XMAS then
-        c = c + 1
+    for c = 1, #line - #XMAS + 1 do
+      if find_xmas_on_diagonal(lines, r, c, false) then
+        count = count + 1
       end
     end
   end
 
-  return c
+  return count
+end
+
+local function is_MxS_or_SxM(c1, c2)
+  return c1 == M and c2 == S or c1 == S and c2 == M
+end
+
+local function find_mas(lines, row, col)
+  if lines[row]:sub(col, col) == A then
+    local c1 = lines[row - 1]:sub(col - 1, col - 1)
+    local c2 = lines[row + 1]:sub(col + 1, col + 1)
+    if is_MxS_or_SxM(c1, c2) then
+      c1 = lines[row - 1]:sub(col + 1, col + 1)
+      c2 = lines[row + 1]:sub(col - 1, col - 1)
+      if is_MxS_or_SxM(c1, c2) then
+        return true
+      end
+    end
+  end
+  return false
 end
 
 local function part2(filename)
   local lines = lib.load_lines_from_file(filename)
-  return -1
+  local count = 0
+  for row = 2, #lines - 1 do
+    for col = 2, #lines[1] - 1 do
+      if find_mas(lines, row, col) then
+        count = count + 1
+      end
+    end
+  end
+  return count
 end
 
 return {
