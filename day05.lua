@@ -3,33 +3,6 @@ local lib = require("lib")
 local MATCH_COMMA = "([^,]+)"
 local MATCH_PIPE = "([^|]+)"
 
-local function in_array(t, v)
-  for _, w in ipairs(t) do
-    if v == w then
-      return true
-    end
-  end
-  return false
-end
-
-local function all(t, f)
-  for _, v in ipairs(t) do
-    if not f(v) then
-      return false
-    end
-  end
-  return true
-end
-
-local function any(t, f)
-  for _, v in ipairs(t) do
-    if f(v) then
-      return true
-    end
-  end
-  return false
-end
-
 local function parse(lines)
   local first_section = true
   local rules = {}
@@ -69,8 +42,8 @@ local function update_correct(rules, update)
     for j = 1, i - 1 do
       table.insert(before, update[j])
     end
-    if rules[page] and any(before, function(x)
-      return in_array(rules[page], x)
+    if rules[page] and lib.any(before, function(x)
+      return lib.in_array(rules[page], x)
     end) then
       return false
     end
@@ -79,8 +52,8 @@ local function update_correct(rules, update)
     for j = i + 1, #update do
       table.insert(after, update[j])
     end
-    if rules[page] and not all(after, function(x)
-      return in_array(rules[page], x)
+    if rules[page] and not lib.all(after, function(x)
+      return lib.in_array(rules[page], x)
     end) then
       return false
     end
@@ -90,7 +63,7 @@ end
 
 local function reorder(rules, update)
   table.sort(update, function(a, b)
-    return rules[a] and in_array(rules[a], b)
+    return rules[a] and lib.in_array(rules[a], b)
   end)
 end
 

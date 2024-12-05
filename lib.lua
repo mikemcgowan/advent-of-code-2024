@@ -28,6 +28,18 @@ function string.to_lines(s)
   return s:split("[^\r\n]+")
 end
 
+function table.to_set(t)
+  local u = {}
+  local seen = {}
+  for _, v in ipairs(t) do
+    if not seen[v] then
+      table.insert(u, v)
+      seen[v] = true
+    end
+  end
+  return u
+end
+
 local function load_lines_from_file(filename)
   local file = io.open(filename, "r")
   if not file then
@@ -72,10 +84,37 @@ local function max_by(t, f)
   return max
 end
 
+local function all(t, f)
+  for _, v in ipairs(t) do
+    if not f(v) then
+      return false
+    end
+  end
+  return true
+end
+
+local function any(t, f)
+  for _, v in ipairs(t) do
+    if f(v) then
+      return true
+    end
+  end
+  return false
+end
+
+local function in_array(t, v)
+  return any(t, function(x)
+    return v == x
+  end)
+end
+
 return {
   colours = colours,
   load_lines_from_file = load_lines_from_file,
   map = map,
   filter = filter,
   max_by = max_by,
+  all = all,
+  any = any,
+  in_array = in_array,
 }
