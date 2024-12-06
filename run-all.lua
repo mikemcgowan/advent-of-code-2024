@@ -1,6 +1,8 @@
 local lib = require("lib")
 
-for x = 1, 5 do
+local DAYS = 6
+
+for x = 1, DAYS do
   local d = tostring(x)
   if #d < 2 then
     d = "0" .. d
