@@ -1,5 +1,13 @@
 local lib = require("lib")
 
+local function append(n, xs)
+  local ys = { n }
+  for i = 3, #xs do
+    table.insert(ys, xs[i])
+  end
+  return ys
+end
+
 local function recurse(expected, concat, xs, results)
   if #xs == 1 then
     table.insert(results, xs[1])
@@ -7,28 +15,10 @@ local function recurse(expected, concat, xs, results)
   end
   local x = xs[1]
   local y = xs[2]
-
-  -- add
-  local ys = { x + y }
-  for i = 3, #xs do
-    table.insert(ys, xs[i])
-  end
-  recurse(expected, concat, ys, results)
-
-  -- multiply
-  local zs = { x * y }
-  for i = 3, #xs do
-    table.insert(zs, xs[i])
-  end
-  recurse(expected, concat, zs, results)
-
-  -- concat
+  recurse(expected, concat, append(x + y, xs), results)
+  recurse(expected, concat, append(x * y, xs), results)
   if concat then
-    local cs = { tonumber(tostring(x) .. tostring(y)) }
-    for i = 3, #xs do
-      table.insert(cs, xs[i])
-    end
-    recurse(expected, concat, cs, results)
+    recurse(expected, concat, append(tonumber(tostring(x) .. tostring(y)), xs), results)
   end
 end
 
