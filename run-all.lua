@@ -1,6 +1,6 @@
 local lib = require("lib")
 
-local DAYS = 6
+local DAYS = 7
 
 for x = 1, DAYS do
   local d = tostring(x)
