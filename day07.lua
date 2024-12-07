@@ -8,17 +8,23 @@ local function append(n, xs)
   return ys
 end
 
-local function recurse(expected, concat, xs, results)
+local function recurse(expected, concat, xs)
   if #xs == 1 then
-    table.insert(results, xs[1])
-    return
+    return xs[1] == expected
   end
   local x = xs[1]
+  if x > expected then
+    return false
+  end
   local y = xs[2]
-  recurse(expected, concat, append(x + y, xs), results)
-  recurse(expected, concat, append(x * y, xs), results)
-  if concat then
-    recurse(expected, concat, append(tonumber(tostring(x) .. tostring(y)), xs), results)
+  if recurse(expected, concat, append(x + y, xs)) then
+    return true
+  elseif recurse(expected, concat, append(x * y, xs)) then
+    return true
+  elseif concat and recurse(expected, concat, append(tonumber(tostring(x) .. tostring(y)), xs)) then
+    return true
+  else
+    return false
   end
 end
 
@@ -29,13 +35,8 @@ local function calc(v, concat)
   for i = 2, #bits do
     table.insert(xs, tonumber(bits[i]))
   end
-  local results = {}
-  recurse(expected, concat, xs, results)
-  if lib.any(results, function(result)
-    return result == expected
-  end) then
-    return expected
-  end
+  local found = recurse(expected, concat, xs)
+  return found and expected or nil
 end
 
 local function go(filename, concat)
