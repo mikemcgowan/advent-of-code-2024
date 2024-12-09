@@ -115,15 +115,11 @@ local function part(filename, f)
 end
 
 local function part1(filename)
-  return part(filename, function(blocks)
-    return defragment_part_1(blocks)
-  end)
+  return part(filename, defragment_part_1)
 end
 
 local function part2(filename)
-  return part(filename, function(blocks)
-    return defragment_part_2(blocks)
-  end)
+  return part(filename, defragment_part_2)
 end
 
 return {
