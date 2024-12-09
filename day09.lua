@@ -106,20 +106,24 @@ local function checksum(t)
   return math.floor(sum)
 end
 
-local function part1(filename)
+local function part(filename, f)
   local lines = lib.load_lines_from_file(filename)
   local line = lines[1]
   local blocks = to_blocks(line)
-  local defragmented = defragment_part_1(blocks)
+  local defragmented = f(blocks)
   return checksum(defragmented)
 end
 
+local function part1(filename)
+  return part(filename, function(blocks)
+    return defragment_part_1(blocks)
+  end)
+end
+
 local function part2(filename)
-  local lines = lib.load_lines_from_file(filename)
-  local line = lines[1]
-  local blocks = to_blocks(line)
-  local defragmented = defragment_part_2(blocks)
-  return checksum(defragmented)
+  return part(filename, function(blocks)
+    return defragment_part_2(blocks)
+  end)
 end
 
 return {
