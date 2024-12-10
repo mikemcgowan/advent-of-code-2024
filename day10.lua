@@ -16,41 +16,38 @@ local function lines_to_grid(lines)
   return grid
 end
 
-local function insert_point_if_not_exists(trailends, i, j)
-  local exists = false
-  for _, v in ipairs(trailends) do
-    if v.i == i and v.j == j then
-      exists = true
-      break
+local function insert_point(distinct_trails, trailends, p)
+  if not distinct_trails then
+    for _, q in ipairs(trailends) do
+      if q.i == p.i and q.j == p.j then
+        return
+      end
     end
   end
-  if not exists then
-    table.insert(trailends, { i = i, j = j })
-  end
+  table.insert(trailends, { i = p.i, j = p.j })
 end
 
-local function count_paths_from(grid, distinct_trails, i, j, n, trailends)
-  assert(grid[i][j] == n)
-  if grid[i][j] == TRAILEND then
-    if distinct_trails then
-      table.insert(trailends, { i = i, j = j })
-    else
-      insert_point_if_not_exists(trailends, i, j)
-    end
+local function in_bounds(grid, i, j)
+  return i > 0 and i <= #grid and j > 0 and j <= #grid[i]
+end
+
+local function count_paths_from(grid, distinct_trails, p, n, trailends)
+  assert(grid[p.i][p.j] == n)
+  if n == TRAILEND then
+    insert_point(distinct_trails, trailends, p)
     return
   end
+  local neighbours = {
+    { i = p.i - 1, j = p.j + 0 },
+    { i = p.i + 1, j = p.j + 0 },
+    { i = p.i + 0, j = p.j - 1 },
+    { i = p.i + 0, j = p.j + 1 },
+  }
   local next = n + 1
-  if i > 1 and grid[i - 1][j] == next then
-    count_paths_from(grid, distinct_trails, i - 1, j, next, trailends)
-  end
-  if i < #grid and grid[i + 1][j] == next then
-    count_paths_from(grid, distinct_trails, i + 1, j, next, trailends)
-  end
-  if j > 1 and grid[i][j - 1] == next then
-    count_paths_from(grid, distinct_trails, i, j - 1, next, trailends)
-  end
-  if j < #grid[i] and grid[i][j + 1] == next then
-    count_paths_from(grid, distinct_trails, i, j + 1, next, trailends)
+  for _, q in ipairs(neighbours) do
+    if in_bounds(grid, q.i, q.j) and grid[q.i][q.j] == next then
+      count_paths_from(grid, distinct_trails, q, next, trailends)
+    end
   end
 end
 
@@ -60,7 +57,7 @@ local function go(grid, distinct_trails)
     for j = 1, #grid[i] do
       if grid[i][j] == TRAILHEAD then
         local trailends = {}
-        count_paths_from(grid, distinct_trails, i, j, TRAILHEAD, trailends)
+        count_paths_from(grid, distinct_trails, { i = i, j = j }, TRAILHEAD, trailends)
         sum = sum + #trailends
       end
     end
