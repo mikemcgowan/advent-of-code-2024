@@ -29,34 +29,38 @@ local function insert_point_if_not_exists(trailends, i, j)
   end
 end
 
-local function count_paths_from(grid, i, j, n, trailends)
+local function count_paths_from(grid, distinct_trails, i, j, n, trailends)
   assert(grid[i][j] == n)
   if grid[i][j] == TRAILEND then
-    insert_point_if_not_exists(trailends, i, j)
+    if distinct_trails then
+      table.insert(trailends, { i = i, j = j })
+    else
+      insert_point_if_not_exists(trailends, i, j)
+    end
     return
   end
   local next = n + 1
   if i > 1 and grid[i - 1][j] == next then
-    count_paths_from(grid, i - 1, j, next, trailends)
+    count_paths_from(grid, distinct_trails, i - 1, j, next, trailends)
   end
   if i < #grid and grid[i + 1][j] == next then
-    count_paths_from(grid, i + 1, j, next, trailends)
+    count_paths_from(grid, distinct_trails, i + 1, j, next, trailends)
   end
   if j > 1 and grid[i][j - 1] == next then
-    count_paths_from(grid, i, j - 1, next, trailends)
+    count_paths_from(grid, distinct_trails, i, j - 1, next, trailends)
   end
   if j < #grid[i] and grid[i][j + 1] == next then
-    count_paths_from(grid, i, j + 1, next, trailends)
+    count_paths_from(grid, distinct_trails, i, j + 1, next, trailends)
   end
 end
 
-local function go(grid)
+local function go(grid, distinct_trails)
   local sum = 0
   for i = 1, #grid do
     for j = 1, #grid[i] do
       if grid[i][j] == TRAILHEAD then
         local trailends = {}
-        count_paths_from(grid, i, j, TRAILHEAD, trailends)
+        count_paths_from(grid, distinct_trails, i, j, TRAILHEAD, trailends)
         sum = sum + #trailends
       end
     end
@@ -66,12 +70,12 @@ end
 
 local function part1(filename)
   local lines = lib.load_lines_from_file(filename)
-  return go(lines_to_grid(lines))
+  return go(lines_to_grid(lines), false)
 end
 
 local function part2(filename)
   local lines = lib.load_lines_from_file(filename)
-  return -1
+  return go(lines_to_grid(lines), true)
 end
 
 return {

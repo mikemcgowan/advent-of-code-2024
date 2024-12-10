@@ -6,6 +6,6 @@ describe("day 10", function()
   end)
 
   it("works for part 2", function()
-    assert.are.same(0, day.part2("./inputs/day10-spec.txt"))
+    assert.are.same(81, day.part2("./inputs/day10-spec.txt"))
   end)
 end)
